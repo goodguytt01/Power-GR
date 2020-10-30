@@ -1,6 +1,6 @@
 # Power-GR
 full functional mobile api gateway based on java. <br><br/>
-support dubbo protocal to http protocal. <br><br/>
+support dubbo protocal to http protocal.(no need to modify ur own biz code) <br><br/>
 support http protocal to http protocal. <br><br/>
 support http & rpc rate limit. <br><br/>
 support http and rpc Circuit breaker. <br><br/>
@@ -19,7 +19,7 @@ loop update in one week.
 
 全功能移动网关
 
-1.支持dubbo协议转换为http协议。<br><br/>
+1.支持dubbo协议转换为http协议。(无入侵式接口集成)<br><br/>
 2.支持http协议转换为http协议。<br><br/>
 3.支持rpc级别和http级别的网关限流。<br><br/>
 4.支持http级别和rpc级别的熔断.<br><br/>
