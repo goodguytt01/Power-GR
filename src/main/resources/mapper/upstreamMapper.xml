@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tk.mybatis.springboot.mapper.UpStreamMapper">
+  <resultMap id="BaseResultMap" type="tk.mybatis.springboot.model.Upstream">
+    <!--
+      WARNING - @mbg.generated
+    -->
+      <result column="name" jdbcType="VARCHAR" property="name" />
+      <result column="status"  property="status" />
+      <result column="url" jdbcType="VARCHAR" property="url" />
+      <result column="health_check_url" jdbcType="VARCHAR" property="healthCheckUrl" />
+      <result column="updator_id" jdbcType="BIGINT" property="updatorId" />
+      <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+     <result column="creator_id" jdbcType="VARCHAR" property="creatorId" />
+    <result column="create_time"  property="createTime" />
+    <result column="delete_flag"  property="deleteFlag" />
+  </resultMap>
+
+  <insert id="insert" parameterType="tk.mybatis.springboot.model.Upstream" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_upstream(name,url,health_check_url,client_id,create_time,delete_flag) values
+        (#{name},#{url},#{healthCheckUrl},#{clientId},#{createTime},#{deleteFlag})
+  </insert>
+
+  <select id="getList" resultMap="BaseResultMap">
+        select * from tb_upstream where  delete_flag = 0
+  </select>
+
+
+    <select id="getById" resultMap="BaseResultMap">
+        select * from tb_upstream where  delete_flag = 0 and status = 0 and id = #{id}
+  </select>
+
+
+    <select id="getUrl" resultMap="BaseResultMap">
+        select * from tb_upstream where  delete_flag = 0 and status = 0 and url = #{url}
+  </select>
+
+
+
+
+
+    <update id="updateUpStream" parameterType="tk.mybatis.springboot.model.Upstream">
+        update tb_upstream set name = #{name},health_check_url=#{healthCheckUrl},url=#{url}
+         where id = #{id}
+  </update>
+
+  <update id="deleteUpStream" parameterType="tk.mybatis.springboot.model.Upstream">
+        update tb_upstream set delete_flag = 1
+         where id = #{id}
+  </update>
+
+  <update id="enableOrDisable" parameterType="tk.mybatis.springboot.model.Upstream">
+        update tb_upstream set status = #{status}
+         where id = #{id}
+  </update>
+
+
+
+</mapper>

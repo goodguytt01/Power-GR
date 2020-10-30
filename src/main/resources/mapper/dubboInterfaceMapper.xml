@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tk.mybatis.springboot.mapper.DubboInterfaceMapper">
+  <resultMap id="BaseResultMap" type="tk.mybatis.springboot.model.DubboInterface">
+    <!--
+      WARNING - @mbg.generated
+    -->
+      <result column="zk_addr" jdbcType="VARCHAR" property="zkAddr" />
+      <result column="id" jdbcType="BIGINT" property="id" />
+      <result column="client_id" jdbcType="VARCHAR" property="clientId" />
+      <result column="interface_addr" jdbcType="VARCHAR" property="interfaceAddr" />
+      <result column="domain" jdbcType="VARCHAR" property="domain" />
+      <result column="status"  property="status" />
+      <result column="url" jdbcType="VARCHAR" property="url" />
+      <result column="parameter_type" jdbcType="VARCHAR" property="parameterType" />
+      <result column="parameter_name" jdbcType="VARCHAR" property="parameterName" />
+      <result column="updator_id" jdbcType="BIGINT" property="updatorId" />
+      <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+     <result column="creator_id" jdbcType="VARCHAR" property="creatorId" />
+    <result column="create_time"  property="createTime" />
+    <result column="delete_flag"  property="deleteFlag" />
+  </resultMap>
+
+  <insert id="insert" parameterType="tk.mybatis.springboot.model.DubboInterface" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_dubbo_interface(zk_addr,domain,url,interface_addr,parameter_type,parameter_name,client_id,create_time,delete_flag) values
+        (#{zkAddr},#{domain},#{url},#{interfaceAddr},#{parameterType},#{parameterName},#{clientId},#{createTime},#{deleteFlag})
+  </insert>
+
+  <select id="getList" resultMap="BaseResultMap">
+        select * from tb_dubbo_interface where  delete_flag = 0 order by domain
+  </select>
+
+
+    <select id="getById" resultMap="BaseResultMap">
+        select * from tb_dubbo_interface where  delete_flag = 0 and status = 0 and id = #{id}
+  </select>
+
+
+
+
+    <update id="updateInterface" parameterType="tk.mybatis.springboot.model.DubboInterface">
+        update tb_dubbo_interface set zk_addr = #{zkAddr}, interface_addr = #{interfaceAddr},domain = #{domian},url = #{url},
+        parameter_type = #{parameterType},parameter_name = #{parameterName}
+         where id = #{id}
+  </update>
+
+  <update id="deleteInterface" parameterType="tk.mybatis.springboot.model.DubboInterface">
+        update tb_dubbo_interface set delete_flag = 1
+         where id = #{id}
+  </update>
+
+  <update id="enableOrDisable" parameterType="tk.mybatis.springboot.model.DubboInterface">
+        update tb_dubbo_interface set status = #{status}
+         where id = #{id}
+  </update>
+
+
+
+</mapper>

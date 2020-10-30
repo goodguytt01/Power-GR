@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tk.mybatis.springboot.mapper.DubboMethodMapper">
+  <resultMap id="BaseResultMap" type="tk.mybatis.springboot.model.DubboMethod">
+    <!--
+      WARNING - @mbg.generated
+    -->
+      <result column="id" jdbcType="BIGINT" property="id" />
+      <result column="client_id" jdbcType="VARCHAR" property="client_id" />
+      <result column="status"  property="status" />
+      <result column="url"  property="url" />
+      <result column="interface_id"  property="interfaceId" />
+      <result column="parameter_type" jdbcType="VARCHAR" property="parameterType" />
+      <result column="parameter_name" jdbcType="VARCHAR" property="parameterName" />
+      <result column="method_name" jdbcType="VARCHAR" property="methodName" />
+      <result column="updator_id" jdbcType="BIGINT" property="updatorId" />
+      <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+     <result column="creator_id" jdbcType="VARCHAR" property="creatorId" />
+    <result column="create_time"  property="createTime" />
+    <result column="delete_flag"  property="deleteFlag" />
+  </resultMap>
+
+  <insert id="insert" parameterType="tk.mybatis.springboot.model.DubboMethod" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_dubbo_method(interface_id,parameter_type,parameter_name,method_name,client_id,create_time,delete_flag,status,url) values
+        (#{interfaceId},#{parameterType},#{parameterName},#{methodName},#{clientId},#{createTime},#{deleteFlag},0,#{url})
+  </insert>
+
+    <select id="getById" resultMap="BaseResultMap">
+        select * from tb_dubbo_method where  delete_flag = 0  and id = #{interfaceId}
+  </select>
+
+  <select id="getList" resultMap="BaseResultMap">
+        select * from tb_dubbo_method where  delete_flag = 0  and interface_id = #{interfaceId}
+  </select>
+
+  <update id="updateDeleteStatus" parameterType="tk.mybatis.springboot.model.DubboMethod">
+        update tb_dubbo_method set delete_flag = #{deleteFlag}
+         where id = #{id}
+  </update>
+
+
+    <update id="updateStatus" parameterType="tk.mybatis.springboot.model.DubboMethod">
+        update tb_dubbo_method set status = #{status}
+         where id = #{id}
+  </update>
+
+    <select id="getUrl" resultMap="BaseResultMap">
+    select * from tb_dubbo_method where  delete_flag = 0 and url = #{url} and status = 0
+</select>
+</mapper>
