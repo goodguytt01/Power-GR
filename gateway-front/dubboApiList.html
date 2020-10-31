@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Hello, World!</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="A starter project for making jQuery plugins">
+        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" href="css/jquery.dataTables.min.css">
+    </head>
+    <body>
+<br>
+<br>
+<br>
+<br>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="dist/jquery.hello.min.js"></script>
+    <script src="js/jquery.dataTables.js"></script>
+    <script src="node_modules/datatables.net-editor-dt/js/dataTables.editor.min.js"></script>
+    <script src="js/layer/layer.js"></script>
+
+    <table>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<input name="delete" type="button" value="删除所选接口类" onclick="deleteButton();"></td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<input name="disable" type="button" value="禁用/启用所选接口类" onclick="enableButton();"></td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<input name="edit" type="button" value="修改所选接口类" onclick="getSelectedRow();"></td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<input name="edit" type="button" value="为所选接口类添加网关接口" onclick="addMethod();"></td>
+        </tr>
+
+    </table>
+    </p>
+    </p>
+    </p>
+    <table id="example" class="display" >
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>zkAddr</th>
+            <th>domain</th>
+            <th>interfaceAddr</th>
+            <th>status</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot>
+        </tfoot>
+    </table>
+    </body>
+    <script type="text/javascript" class="init">
+
+
+
+        $(document).ready(
+        $.ajax({
+            //请求方式
+            type : "GET",
+            //请求的媒体类型
+            contentType: "application/json;charset=UTF-8",
+            //请求地址
+            url : "http://localhost:9090/Dubbo/Interface/List",
+            //数据，json字符串
+            //请求成功
+            success : function(result) {
+                data = result.data;
+                data = data.data;
+                for(var i=0;i<data.length;i++){
+                    console.info(data[i].status);
+                    if(data[i].status==0){
+                        data[i].status = "启用";
+                    }else{
+                        data[i].status = "禁用";
+                    }
+                }
+                $('#example').DataTable( {
+                    data: data ,
+                    columns: [
+                        { data: 'id' },
+                        { data: 'zkAddr' },
+                        { data: 'domain' },
+                        { data: 'interfaceAddr' },
+                        { data: 'status' },
+                    ],
+                } );
+                var Dtable = $('#example').DataTable();
+                $('#example tbody').on('click', 'tr', function () {
+                    if ($(this).hasClass('selected') ) {
+                        $(this).removeClass('selected');
+                    } else {
+                        Dtable.$('tr.selected').removeClass('selected');
+                        $(this).addClass('selected');
+                    }
+                })
+
+            },
+            //请求失败，包含具体的错误信息
+            error : function(e){
+                console.log(e.status);
+                console.log(e.responseText);
+            }
+        })
+        )
+        ;
+        function   deleteButton(){
+            var Dtable = $('#example').DataTable();
+            var  selected = Dtable.rows('.selected').data();
+            if(selected[0].status=="启用"){
+                selected[0].status = true;
+            }else{
+                selected[0].status = false;
+            }
+            $.ajax({ url: "http://localhost:9090/Dubbo/Interface/Delete",   //请求方式
+                type : "POST",
+                data : JSON.stringify(selected[0]),
+                //请求的媒体类型
+                contentType: "application/json;charset=UTF-8", success: function(){
+                    window.location.reload();
+                }});
+        }
+        function   enableButton(){
+            var Dtable = $('#example').DataTable();
+            var  selected = Dtable.rows('.selected').data();
+            if(selected[0].status=='启用'){
+                selected[0].status = true;
+            }else{
+                selected[0].status = false;
+            }
+            $.ajax({ url: "http://localhost:9090/Dubbo/Interface/Status",   //请求方式
+                type : "POST",
+                data : JSON.stringify(selected[0]),
+                //请求的媒体类型
+                contentType: "application/json;charset=UTF-8", success: function(){
+                    window.location.reload();
+                }});
+        }
+        function  getSelectedRow() {
+            var Dtable = $('#example').DataTable();
+            var  selected = Dtable.rows('.selected').data();
+            for(var i=0;i<selected.length;i++){
+                var selectedData = selected[i];
+                layer.open({
+                    type: 2,
+                    skin: 'layui-layer-rim', //加上边框
+                    area: ['400px', '440px'], //宽高
+                    content: 'interfaceUpdate.html?zkAddr='+selectedData.zkAddr+",domain="+selectedData.domain+",interfaceAddr="+selectedData.interfaceAddr+",url="+selectedData.url+",parameterName="+selectedData.parameterName+",status="+selectedData.status+",parameterType="+selectedData.parameterType
+                });
+            }
+        }
+
+        function  addMethod() {
+            var Dtable = $('#example').DataTable();
+            var  selected = Dtable.rows('.selected').data();
+            window.open('dubboApiMethodList.html?id='+selected[0].id);
+
+        }
+
+    </script>
+
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Hello, World!</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="A starter project for making jQuery plugins">
+        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    </head>
+    <body>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+        <table style="border-collapse:separate; border-spacing:0px 10px;font-family: 'Microsoft YaHei UI';font-size: 12px" class="table">
+            <tr><td >请填写Http集群信息:</td><td></td></tr>
+            <tr><td>集群名称:</td><td><input type="text" id="name"></td></tr>
+            <tr><td>集群url路径:</td><td><input type="text" id="url"></td></tr>
+            <tr><td>集群健康检查路径:</td><td><input type="text" id="healthCheckUrl"></td></tr>
+        <tr><td><input type="button" id="save" value="保存" onclick="addDubbo();"></td><td></td></tr>
+    </table>
+    </body>
+    <script type="application/javascript">
+       function  addDubbo() {
+           var name = $('#name').val();
+           var url = $('#url').val();
+           var healthCheckUrl = $('#healthCheckUrl').val();
+           zkAddr ={"name":""+name,"url":""+url,"healthCheckUrl":""+healthCheckUrl};
+           $.ajax({
+               //请求方式
+               type: "POST",
+               //请求的媒体类型
+               contentType: "application/json;charset=UTF-8",
+               //请求地址
+               url: "http://localhost:9090/UpStream/Add",
+               //数据，json字符串
+               data: JSON.stringify(zkAddr),
+               //请求成功
+               success: function (result) {
+                   $('#save').attr("disabled", true);
+                   alert("添加成功");
+                   window.location.reload();
+               },
+               //请求失败，包含具体的错误信息
+               error: function (e) {
+                   console.log(e.status);
+                   console.log(e.responseText);
+               }
+           });
+       }
+    </script>
+</html>

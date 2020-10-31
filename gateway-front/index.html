@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Hello, World!</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="A starter project for making jQuery plugins">
+        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" href="css/jquery.dataTables.min.css">
+    </head>
+    <body>
+<br>
+<br>
+<br>
+<br>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="dist/jquery.hello.min.js"></script>
+    <script src="js/jquery.dataTables.js"></script>
+    <script src="node_modules/datatables.net-editor-dt/js/dataTables.editor.min.js"></script>
+    <script src="js/layer/layer.js"></script>
+    <script type="text/javascript" class="init">
+        var data = null;
+        function getDuboo(){
+                    var zkAddr = $('#zkAddr').val();
+                    var domain = $('#domain').val();
+                    zkAddr = {"zkAddr":""+zkAddr,"domain":""+domain};
+                    $.ajax({
+                        //请求方式
+                        type : "POST",
+                        //请求的媒体类型
+                        contentType: "application/json;charset=UTF-8",
+                        //请求地址
+                        url : "http://localhost:9090/Api/Zk/Apis",
+                        //数据，json字符串
+                        data : JSON.stringify(zkAddr),
+                        //请求成功
+                        success : function(result) {
+                            console.info(result.data);
+                         data = result.data;
+                        $('#example').DataTable( {
+                                data: data,
+                                columns: [
+                                    { data: 'zkAddr' },
+                                    { data: 'domain' },
+                                    { data: 'interfaceAddr' },
+                                ],
+                            buttons: [
+                                { extend: 'create' },
+                                { extend: 'edit'},
+                                { extend: 'remove'}
+                            ],
+                            oTableTools: {
+                                "sRowSelect": "multi",
+                                "aButtons": [
+                                    {"sExtends":    "new_record","sButtonText": "Add"},
+                                    {"sExtends":    "select","sButtonText": "Delete Recods",
+                                        "fnClick": function (nButton, oConfig, oFlash) {
+                                            //delete stuff comes here
+                                            alert('test');
+                                        }
+
+                                    }
+                                ]
+                            }
+                            } );
+                            var Dtable = $('#example').DataTable();
+                            $('#example tbody').on('click', 'tr', function () {
+                                if ($(this).hasClass('selected') ) {
+                                    $(this).removeClass('selected');
+                                } else {
+                                    Dtable.$('tr.selected').removeClass('selected');
+                                    $(this).addClass('selected');
+                                }
+                            })
+
+                        },
+                        //请求失败，包含具体的错误信息
+                        error : function(e){
+                            console.log(e.status);
+                            console.log(e.responseText);
+                        }
+                    });
+        }
+
+        function  getSelectedRow() {
+            var Dtable = $('#example').DataTable();
+            var  selected = Dtable.rows('.selected').data();
+            selected = selected[0];
+            $.ajax({
+                //请求方式
+                type : "POST",
+                //请求的媒体类型
+                contentType: "application/json;charset=UTF-8",
+                //请求地址
+                url : "http://localhost:9090/Dubbo/Interface/Add",
+                //数据，json字符串
+                data : JSON.stringify(selected),
+                //请求成功
+                success : function(result) {
+                    $('#save').attr("disabled",true);
+                    alert("添加成功");
+                },
+                //请求失败，包含具体的错误信息
+                error : function(e){
+                    console.log(e.status);
+                    console.log(e.responseText);
+                }
+            });
+        }
+
+        function  addAll() {
+            var Dtable = $('#example').DataTable();
+            console.info(Dtable.data());
+            for(var i=0;i<Dtable.data().length;i++){
+                $.ajax({
+                    //请求方式
+                    type : "POST",
+                    //请求的媒体类型
+                    contentType: "application/json;charset=UTF-8",
+                    //请求地址
+                    url : "http://localhost:9090/Dubbo/Interface/Add",
+                    //数据，json字符串
+                    data : JSON.stringify(Dtable.data()[i]),
+                    //请求成功
+                    success : function(result) {
+                        $('#save').attr("disabled",true);
+                    },
+                    //请求失败，包含具体的错误信息
+                    error : function(e){
+                        console.log(e.status);
+                        console.log(e.responseText);
+                    }
+                });
+
+            }
+            alert("添加成功");
+        }
+    </script>
+
+    <table>
+        <tr><td>zookeeper地址:<input id="zkAddr" name="zkAddr" type="text" value="118.25.77.78:2181"></td><td>&nbsp;&nbsp;&nbsp;&nbsp;domain名称:<input id="domain" name="domain" type="text" value="crm-user-center"></td><td>&nbsp;&nbsp;&nbsp;&nbsp;<input name="getDubbo" type="button" value="获取接口" onclick="getDuboo();"></td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<input name="getDubbo" type="button" value="注册所选接口" onclick="getSelectedRow();"></td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<input name="getDubbo" type="button" value="注册所有接口" onclick="addAll();"></td>
+        </tr>
+
+    </table>
+    </p>
+    </p>
+    </p>
+    <table id="example" class="display" style="width:100%">
+        <thead>
+        <tr>
+            <th>zkAddr</th>
+            <th>domain</th>
+            <th>interfaceAddr</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot>
+        </tfoot>
+    </table>
+    </body>
+
+</html>

@@ -1,0 +1,90 @@
+{
+  "_from": "jquery-seed",
+  "_id": "jquery-seed@2.0.3",
+  "_inBundle": false,
+  "_integrity": "sha1-TuJg/dX7XRlQYgI3Ps48OzBcisg=",
+  "_location": "/jquery-seed",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "jquery-seed",
+    "name": "jquery-seed",
+    "escapedName": "jquery-seed",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/jquery-seed/-/jquery-seed-2.0.3.tgz",
+  "_shasum": "4ee260fdd5fb5d19506202373ece3c3b305c8ac8",
+  "_spec": "jquery-seed",
+  "_where": "D:\\work",
+  "author": {
+    "name": "Ty-Lucas Kelley",
+    "email": "tylucaskelley@gmail.com"
+  },
+  "bin": {
+    "jqseed": "bin/generate"
+  },
+  "bugs": {
+    "url": "https://github.com/tylucaskelley/jquery-seed/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": "This project is no longer maintained",
+  "description": "A starter project for making jQuery plugins.",
+  "devDependencies": {
+    "bootstrap": "^3.2.0",
+    "chai": "^1.9.1",
+    "chai-webdriver": "^0.9.3",
+    "chromedriver": "^2.10.0-1",
+    "http-server": "^0.12.3",
+    "jquery": "^3.5.1",
+    "jquery.dataTables.min.js": "^1.10.5",
+    "jshint": "^2.5.5",
+    "mocha": "^1.21.4",
+    "node-http-server": "^1.6.2",
+    "normalize.css": "^3.0.1",
+    "selenium-webdriver": "^2.42.1",
+    "uglify-js": "^2.4.15"
+  },
+  "homepage": "https://github.com/tylucaskelley/jquery-seed#readme",
+  "jshintConfig": {
+    "browser": true,
+    "node": true,
+    "unused": true,
+    "undef": true,
+    "globals": {
+      "$": false,
+      "jQuery": false
+    }
+  },
+  "keywords": [
+    "jquery",
+    "javascript",
+    "generator",
+    "seed",
+    "skeleton",
+    "app",
+    "plugin"
+  ],
+  "license": "MIT",
+  "name": "jquery-seed",
+  "preferGlobal": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tylucaskelley/jquery-seed.git"
+  },
+  "scripts": {
+    "clean": "rm -rf node_modules && npm install",
+    "start": "http-server -a 0.0.0.0 -p 3000 -i",
+    "test": "mocha test/spec/tests.js"
+  },
+  "version": "2.0.3",
+  "dependencies": {
+    "datatables.net-buttons-dt": "^1.6.2",
+    "datatables.net-editor-dt": "^1.6.3"
+  }
+}
