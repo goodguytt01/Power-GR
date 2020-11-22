@@ -30,6 +30,17 @@ public class DubboMethodDTO implements Serializable {
 
     private boolean status;
 
+    private int rateLimiter;
+
+
+    public int getRateLimiter() {
+        return rateLimiter;
+    }
+
+    public void setRateLimiter(int rateLimiter) {
+        this.rateLimiter = rateLimiter;
+    }
+
     public String getMethodName() {
         return methodName;
     }

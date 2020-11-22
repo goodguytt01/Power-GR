@@ -27,6 +27,17 @@ public class DubboMethod {
 
     private boolean status;
 
+    private int rateLimiter;
+
+
+    public int getRateLimter() {
+        return rateLimiter;
+    }
+
+    public void setRateLimter(int rateLimiter) {
+        this.rateLimiter = rateLimiter;
+    }
+
     private String url;
 
     public String getUrl() {

@@ -35,6 +35,7 @@ public class  DubboMethodServiceImpl  implements DubboMethodService {
         for(DubboMethod method:list){
             DubboMethodDTO dto = new DubboMethodDTO();
             BeanUtils.copyProperties(method,dto);
+            dto.setRateLimiter(method.getRateLimter());
             dubboMethodDTOS.add(dto);
         }
         return Result.success(dubboMethodDTOS);
@@ -54,6 +55,7 @@ public class  DubboMethodServiceImpl  implements DubboMethodService {
         DubboMethodDTO dubboMethodDTO = new DubboMethodDTO();
         if(dubboMethod!=null) {
             BeanUtils.copyProperties(dubboMethod, dubboMethodDTO);
+            dubboMethodDTO.setRateLimiter(dubboMethod.getRateLimter());
         }else {
             return  Result.error();
         }

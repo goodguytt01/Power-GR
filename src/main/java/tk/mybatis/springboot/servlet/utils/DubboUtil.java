@@ -41,6 +41,7 @@ public class DubboUtil {
         reference.setRetries(0);
         reference.setTimeout(5000);
         reference.setCluster("failfast");
+
         reference.setInterface(apiInfoDTO.getInterfaceAddr());
         reference.setGeneric(true);
         // 声明为泛化接口

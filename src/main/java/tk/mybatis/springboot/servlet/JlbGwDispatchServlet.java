@@ -2,6 +2,7 @@ package tk.mybatis.springboot.servlet;
 
 import com.alibaba.dubbo.rpc.service.GenericService;
 import com.alibaba.fastjson.JSON;
+import com.google.common.util.concurrent.RateLimiter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonPrimitive;
@@ -40,15 +41,32 @@ public class JlbGwDispatchServlet extends HttpServlet {
             .registerTypeAdapter(Date.class, (JsonSerializer<Date>) (date, type, jsonSerializationContext) -> new JsonPrimitive(date.getTime()))
             .create();
 
+    private static  boolean rateFlag = false;
+
+    private static String urlPath = "";
+
+    RateLimiter rateLimiter = RateLimiter.create(1);
 
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("GET the request uri [{}]", req.getRequestURI());
-        }
+
         // 分段获取jlbApi标签配置的domain和url值
         DubboInterfaceDTO apiInfoResult = getApiInfo(req, resp);
+        DubboMethodDTO methodDTO = getMethodInfo(req,resp);
+        if(rateFlag==false){
+            if(StringUtils.isEmpty(urlPath)){
+                rateLimiter.setRate(methodDTO.getRateLimiter());
+                rateFlag = true;
+                urlPath = methodDTO.getUrl();
+            }
+        }else{
+            if(!urlPath.equals(methodDTO.getUrl())){
+                rateLimiter.setRate(methodDTO.getRateLimiter());
+                rateFlag = true;
+                urlPath = methodDTO.getUrl();
+            }
+        }
         if ( apiInfoResult == null) {
             // 如果接口不存在（未上报).返回-99 errorCode.
             Map<String, String> result = new HashMap<>();
@@ -58,6 +76,11 @@ public class JlbGwDispatchServlet extends HttpServlet {
             writeResponse(resp, result);
             return;
         }
+        if(rateLimiter.tryAcquire()){
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("GET the request uri [{}]", req.getRequestURI());
+            }
+
         // 如果需要登录则从会话中获取用户ID
         // 根据查询到的接口信息配置泛化的接口信息。
         DubboUtil dubboUtil = new DubboUtil();
@@ -66,37 +89,59 @@ public class JlbGwDispatchServlet extends HttpServlet {
         GenericService genericService = dubboUtil.getGenericService(apiInfoResult);
         Object result = dubboUtil.genericCallRpc(genericService, getMethodInfo(req,resp), parameters);
         writeResponse(resp, result);
+    }else{
+            Map<String, String> result = new HashMap<>();
+            result.put("code", "11000002");
+            result.put("msg", "访问接口被限流");
+            result.put("data", null);
+            writeResponse(resp, result);
+            return;
+    }
+
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("POST the request uri [{}]", req.getRequestURI());
-        }
-        DubboInterfaceDTO apiInfoResult = getApiInfo(req, resp);
-        // 根据查询到的接口信息配置泛化的接口信息。
-        DubboUtil dubboUtil = new DubboUtil();
-        GenericService genericService = dubboUtil.getGenericService(apiInfoResult);
-        DubboMethodDTO methodDTO = getMethodInfo(req,resp);
-        BufferedReader br = new BufferedReader(new InputStreamReader(req.getInputStream(), StandardCharsets.UTF_8));
-        StringBuilder sb = new StringBuilder();
-        String temp;
-        while ((temp = br.readLine()) != null) {
-            sb.append(temp);
-        }
-        Map<String, String> reqParameters = new HashMap<>();
-        if (!StringUtils.isEmpty(sb.toString())) {
-            reqParameters = JSON.parseObject(sb.toString(), Map.class);
-        }
-        String finalValue = "";
-        if (dubboUtil.isObject(methodDTO.getParameterType())) {
-            finalValue = "{ '" + methodDTO.getParameterName() + "':" + sb + "}";
-        }
-        if (!StringUtils.isEmpty(finalValue)) {
-            reqParameters = JSON.parseObject(finalValue, Map.class);
-        }
-        Object result = dubboUtil.genericCallRpc(genericService,methodDTO, reqParameters);
-        writeResponse(resp, result);
+        RateLimiter rateLimiter = RateLimiter.create(1);
+        if(rateLimiter.tryAcquire()) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("GET the request uri [{}]", req.getRequestURI());
+            }
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("POST the request uri [{}]", req.getRequestURI());
+            }
+            DubboInterfaceDTO apiInfoResult = getApiInfo(req, resp);
+            // 根据查询到的接口信息配置泛化的接口信息。
+            DubboUtil dubboUtil = new DubboUtil();
+            GenericService genericService = dubboUtil.getGenericService(apiInfoResult);
+            DubboMethodDTO methodDTO = getMethodInfo(req, resp);
+            BufferedReader br = new BufferedReader(new InputStreamReader(req.getInputStream(), StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            String temp;
+            while ((temp = br.readLine()) != null) {
+                sb.append(temp);
+            }
+            Map<String, String> reqParameters = new HashMap<>();
+            if (!StringUtils.isEmpty(sb.toString())) {
+                reqParameters = JSON.parseObject(sb.toString(), Map.class);
+            }
+            String finalValue = "";
+            if (dubboUtil.isObject(methodDTO.getParameterType())) {
+                finalValue = "{ '" + methodDTO.getParameterName() + "':" + sb + "}";
+            }
+            if (!StringUtils.isEmpty(finalValue)) {
+                reqParameters = JSON.parseObject(finalValue, Map.class);
+            }
+            Object result = dubboUtil.genericCallRpc(genericService, methodDTO, reqParameters);
+            writeResponse(resp, result);
+        } else{
+                Map<String, String> result = new HashMap<>();
+                result.put("code", "11000002");
+                result.put("msg", "访问接口被限流");
+                result.put("data", null);
+                writeResponse(resp, result);
+                return;
+            }
     }
 
     private DubboInterfaceDTO getApiInfo(HttpServletRequest req, HttpServletResponse resp) throws IOException {

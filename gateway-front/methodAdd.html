@@ -20,6 +20,7 @@
             <tr><td>接口项目名称:</td><td><input type="text" id="domain"></td></tr>
             <tr><td>接口方法参数列表:</td><td><input type="text" id="parasName"></td></tr>
             <tr><td>接口方法类型列表:</td><td><input type="text" id="parasType"></td></tr>
+            <tr><td>接口方法限流值:</td><td><input type="text" id="rateLimiter"></td></tr>
         <tr><td>接口url地址:</td><td><input type="text" id="url"></td></tr>
         <tr><td><input type="button" id="save" value="保存" onclick="addDubbo();"></td><td></td></tr>
     </table>
@@ -65,8 +66,9 @@
            var interfaceAddr = $('#interfaceAddr').val();
            var parameterType = $('#parasType').val();
            var parameterName = $('#parasName').val();
+           var rateLimiter = $('#rateLimiter').val();
            console.info(id);
-           zkAddr ={"interfaceId":""+id,"methodName":""+methodName,"zkAddr":""+zkAddr,"domain":""+domain,"url":""+url,"interfaceAddr":""+interfaceAddr,"parameterType":""+parameterType,"parameterName":""+parameterName};
+           zkAddr ={"rateLimiter":""+rateLimiter,"interfaceId":""+id,"methodName":""+methodName,"zkAddr":""+zkAddr,"domain":""+domain,"url":""+url,"interfaceAddr":""+interfaceAddr,"parameterType":""+parameterType,"parameterName":""+parameterName};
            $.ajax({
                //请求方式
                type: "POST",

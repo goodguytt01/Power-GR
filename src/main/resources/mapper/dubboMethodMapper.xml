@@ -9,6 +9,7 @@
       <result column="client_id" jdbcType="VARCHAR" property="client_id" />
       <result column="status"  property="status" />
       <result column="url"  property="url" />
+      <result column="rate_limiter"  property="rateLimiter" />
       <result column="interface_id"  property="interfaceId" />
       <result column="parameter_type" jdbcType="VARCHAR" property="parameterType" />
       <result column="parameter_name" jdbcType="VARCHAR" property="parameterName" />
